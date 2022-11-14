@@ -174,8 +174,22 @@ int do_simple_command(struct node_s *node)
 		child = child->next_sibling;
 	}
 	argv[argc] = NULL;
-
+	/**
+	 * check if the name of cmd is the name of a builtin utility
+	 * executes if cmd is a builtin utitlity and returns
+	 */
+	int i = 0;
+	for (; i < builtins_count; i++)
+	{
+		if (strcmp(argv[0], builtins[i].name) == 0)
+		{
+			builtins[i].func(argc, argv);
+			free_argv(argc, argv);
+			return (1);
+		}
+	}
 	pid_t child_pid = 0;
+
 	if ((child_pid = fork()) == 0)
 	{
 		do_exec_cmd(argc, argv);
